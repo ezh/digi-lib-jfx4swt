@@ -23,6 +23,7 @@ package org.digimead.digi.lib.jfx4swt
 import com.sun.glass.ui.PlatformFactory
 import com.sun.javafx.application.PlatformImpl
 import java.util.concurrent.{ ConcurrentLinkedQueue, CountDownLatch, Executors }
+import javafx.application.Platform
 import org.digimead.digi.lib.api.XDependencyInjection
 import org.digimead.digi.lib.log.api.XLoggable
 import org.eclipse.swt.graphics.PaletteData
@@ -44,7 +45,7 @@ class JFX extends XLoggable {
   protected[this] val lock = new Object
 
   /** Start event thread. */
-  def start(runnable: Runnable = new Runnable { def run {} }, priority: Int = Thread.MAX_PRIORITY) = lock.synchronized {
+  def start(runnable: Runnable = new Runnable { def run {} }, priority: Int = Thread.MAX_PRIORITY, implicitExit: Boolean = false) = lock.synchronized {
     if (System.getProperty("quantum.multithreaded") == null)
       if (JFX.multithreaded)
         System.setProperty("quantum.multithreaded", "true")
@@ -58,6 +59,13 @@ class JFX extends XLoggable {
       throw new IllegalStateException("Unexpected JavaFX platform factory: " + PlatformFactory.getPlatformFactory())
     if (thread != null)
       throw new IllegalStateException("JavaFX application thread is already exists.")
+    // Sets the implicitExit attribute to the specified value.
+    // If this attribute is true, the JavaFX runtime will implicitly shutdown
+    // when the last window is closed; the JavaFX launcher will call the Application.stop() method
+    // and terminate the JavaFX application thread. If this attribute is false, the application will continue to run normally
+    // even after the last window is closed, until the application calls exit().
+    // SHOULD be false
+    Platform.setImplicitExit(implicitExit)
     try {
       try PlatformImpl.runLater(new Runnable {
         def run {
