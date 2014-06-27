@@ -24,6 +24,7 @@ import com.sun.glass.ui.Screen
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.{ Exchanger, TimeUnit }
 import org.digimead.digi.lib.api.XDependencyInjection
+import org.digimead.digi.lib.jfx4swt.api.XApplication
 import org.digimead.digi.lib.jfx4swt.jfx.{ FXAdapter, FXHost, JFaceCanvas }
 import org.eclipse.swt.graphics.Point
 import org.eclipse.swt.widgets.Display
@@ -32,7 +33,7 @@ import scala.language.implicitConversions
 /**
  * JFX4SWT application adapter.
  */
-abstract class JFXApplication extends com.sun.glass.ui.Application {
+abstract class JFXApplication extends com.sun.glass.ui.Application with XApplication {
   /** Create embedded. */
   def createJFaceCanvas(host: FXHost): JFaceCanvas
   /** Create host. */

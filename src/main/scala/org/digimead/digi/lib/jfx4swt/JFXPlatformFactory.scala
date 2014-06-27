@@ -22,6 +22,7 @@ package org.digimead.digi.lib.jfx4swt
 
 import com.sun.glass.ui.{ Application, Menu, MenuBar, MenuItem, PlatformFactory, Window }
 import org.digimead.digi.lib.api.XDependencyInjection
+import org.digimead.digi.lib.jfx4swt.api.XApplication
 
 /**
  * JFX PlatformFactory
@@ -44,6 +45,6 @@ object JFXPlatformFactory {
    */
   private object DI extends XDependencyInjection.PersistentInjectable {
     /** JFX application. */
-    lazy val application = inject[JFXApplication]
+    lazy val application = inject[XApplication].asInstanceOf[JFXApplication]
   }
 }
