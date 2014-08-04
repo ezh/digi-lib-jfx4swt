@@ -30,7 +30,7 @@ organization := "org.digimead"
 
 organizationHomepage := Some(url("http://digimead.org"))
 
-homepage := Some(url("https://github.com/ezh/digi-lib-jfx4swt-7"))
+homepage := Some(url("https://github.com/ezh/digi-lib-jfx4swt"))
 
 version <<= (baseDirectory) { (b) => scala.io.Source.fromFile(b / "version").mkString.trim }
 
@@ -45,9 +45,9 @@ inConfig(OSGiConf)({
         osgiBndPrivatePackage := List())
 })
 
-crossScalaVersions := Seq("2.11.1")
+crossScalaVersions := Seq("2.11.2")
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-Xcheckinit", "-feature", "-Xfatal-warnings", "-Xelide-below", "ALL")
 
