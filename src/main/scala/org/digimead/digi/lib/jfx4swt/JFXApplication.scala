@@ -22,6 +22,7 @@ package org.digimead.digi.lib.jfx4swt
 
 import com.sun.glass.ui.Screen
 import java.lang.reflect.InvocationTargetException
+import java.util.Locale
 import java.util.concurrent.{ Exchanger, TimeUnit }
 import org.digimead.digi.lib.api.XDependencyInjection
 import org.digimead.digi.lib.jfx4swt.api.XApplication
@@ -43,6 +44,24 @@ abstract class JFXApplication extends com.sun.glass.ui.Application with XApplica
 object JFXApplication {
   /** Application virtual screen. */
   lazy val virtualScreen = DI.virtualScreenBuilder()
+
+  /**
+   * Detect the operating system from the os.name System property and cache
+   * the result
+   *
+   * @return the operating system detected
+   */
+  def getOperatingSystemType() = {
+    val OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH)
+    if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0))
+      "MacOS"
+    else if (OS.indexOf("win") >= 0)
+      "Windows"
+    else if (OS.indexOf("nux") >= 0)
+      "Linux"
+    else
+      "Other"
+  }
 
   /** Build virtual screen. */
   class VirtualScreenBuilder extends Function0[Screen] {
