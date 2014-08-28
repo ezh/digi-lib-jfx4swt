@@ -36,7 +36,7 @@ import scala.collection.JavaConverters.asScalaBufferConverter
  *
  * It is much better to have huge pack of small widgets that single big one.
  */
-class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean = true) extends Canvas(parent, style) {
+class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean = true) extends Canvas(parent, style | SWT.DOUBLE_BUFFERED) {
   /*
    * Those variables declared as '@volatile protected var' because
    * they will set to null after dispose.
@@ -209,7 +209,10 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
         paintControlImageData = if (frameOne.get() == paintControlToDraw) {
           frameEmpty.set(frameTwo.get())
           if ((hostWidth * hostHeight * 4) != paintControlToDraw.length) {
-            null
+            // Frame is incorrect.
+            hostInstance.sceneNeedsRepaint()
+            // Returns previous image.
+            paintControlImageData
           } else {
             if (imageDataFrameTwo.data != paintControlToDraw)
               imageDataFrameTwo = new ImageData(hostWidth, hostHeight, 32, paletteData, 4, paintControlToDraw)
@@ -218,16 +221,20 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
         } else {
           frameEmpty.set(frameOne.get())
           if ((hostWidth * hostHeight * 4) != paintControlToDraw.length) {
-            null
+            // Frame is incorrect.
+            hostInstance.sceneNeedsRepaint()
+            // Returns previous image.
+            paintControlImageData
           } else {
             if (imageDataFrameOne.data != paintControlToDraw)
               imageDataFrameOne = new ImageData(hostWidth, hostHeight, 32, paletteData, 4, paintControlToDraw)
             imageDataFrameOne
           }
         }
-      } else if (paintLastX != event.x || paintLastY != event.y || paintLastWidth != event.width || paintLastHeight != event.height)
-        // Reset paintControlImageData since there was resize.
-        paintControlImageData = null
+      } else if (paintLastX != event.x || paintLastY != event.y || paintLastWidth != event.width || paintLastHeight != event.height) {
+        // This is a thread safe call.
+        hostInstance.sceneNeedsRepaint()
+      }
       // Prepare offscreen image.
       if (paintControlOffscreenImage == null ||
         paintControlOffscreenBounds.width != hostWidth ||
@@ -250,7 +257,7 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
       }
       // Obtain the next frame.
       if (isVisible()) {
-        if (paintControlImageData != null) {
+        if (paintControlImageData != null && paintControlOffscreenImage != null) {
           /*
            * ---> HERE <---
            * most CPU and memory hungry
@@ -260,7 +267,6 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
           paintControlGCOffscreenImage.setBackground(event.gc.getBackground())
           paintControlGCOffscreenImage.drawImage(imageFrame, 0, 0)
           // Draw the offscreen buffer to the screen.
-          event.gc.fillRectangle(event.x, event.y, event.width, event.height)
           event.gc.drawImage(paintControlOffscreenImage, 0, 0)
           imageFrame.dispose()
           // Reset paintControlImageData since there will maybe be resize.
@@ -269,8 +275,7 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
           paintLastWidth = event.width
           paintLastHeight = event.height
         } else {
-          if (paintLastX != event.x || paintLastY != event.y || paintLastWidth != event.width || paintLastHeight != event.height)
-            event.gc.fillRectangle(event.x, event.y, event.width, event.height)
+          event.gc.fillRectangle(event.x, event.y, event.width, event.height)
           // This is a thread safe call.
           hostInstance.sceneNeedsRepaint()
         }
