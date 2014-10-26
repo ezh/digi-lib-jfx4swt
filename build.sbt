@@ -51,11 +51,8 @@ scalaVersion := "2.11.2"
 
 scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-Xcheckinit", "-feature", "-Xfatal-warnings", "-Xelide-below", "ALL")
 
-javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.7", "-target", "1.7")
+javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation")
 
-javacOptions in doc := Seq("-source", "1.7")
-
-if (sys.env.contains("XBOOTCLASSPATH")) Seq(javacOptions += "-Xbootclasspath:" + sys.env("XBOOTCLASSPATH")) else Seq()
 
 //
 // Custom local options
@@ -83,8 +80,8 @@ libraryDependencies ++= {
   Seq(
     "org.eclipse.swt" % artifact % "4.2.1" % "compileonly",
     "org.eclipse.swt" % artifact % "4.2.1" % "test",
-    "org.digimead" %% "digi-lib" % "0.3.0.0-SNAPSHOT",
-    "org.digimead" %% "digi-lib-test" % "0.3.0.0-SNAPSHOT" % "test"
+    "org.digimead" %% "digi-lib" % "0.3.0.1",
+    "org.digimead" %% "digi-lib-test" % "0.3.0.1" % "test"
   )
 }
 
