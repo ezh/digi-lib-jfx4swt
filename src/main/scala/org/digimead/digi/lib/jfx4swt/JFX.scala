@@ -22,7 +22,7 @@ package org.digimead.digi.lib.jfx4swt
 
 import com.sun.glass.ui.PlatformFactory
 import com.sun.javafx.application.PlatformImpl
-import java.util.concurrent.{ ConcurrentLinkedQueue, CountDownLatch, Executors }
+import java.util.concurrent.{ConcurrentLinkedQueue, CountDownLatch, Executors}
 import javafx.application.Platform
 import org.digimead.digi.lib.api.XDependencyInjection
 import org.digimead.digi.lib.log.api.XLoggable

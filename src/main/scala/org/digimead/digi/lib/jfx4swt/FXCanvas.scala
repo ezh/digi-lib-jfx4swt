@@ -24,7 +24,7 @@ import java.util.concurrent.{ CopyOnWriteArrayList, Exchanger, TimeUnit }
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javafx.scene.Scene
 import org.digimead.digi.lib.jfx4swt.JFX.JFX2interface
-import org.digimead.digi.lib.jfx4swt.jfx.{ FXAdapter, JFaceCanvas }
+import org.digimead.digi.lib.jfx4swt.jfx.{ FXAdapter, FXHost, JFaceCanvas }
 import org.eclipse.swt.SWT
 import org.eclipse.swt.events.{ ControlAdapter, ControlEvent, DisposeEvent, DisposeListener, PaintEvent, PaintListener }
 import org.eclipse.swt.graphics.{ GC, Image, ImageData, Point, Rectangle }
@@ -44,14 +44,14 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
    */
   /** Adapter between JavaFX EmbeddedWindow and SWT FXCanvas. */
   @volatile protected var adapterInstance = createAdapter(bindSceneSizeToCanvas)
-  @volatile protected var hostInstance = JFXPlatformFactory.application.createHost(adapterInstance)
-  @volatile protected var stageInstance = JFXPlatformFactory.application.createJFaceCanvas(hostInstance)
+  @volatile protected var hostInstance: FXHost = null
+  @volatile protected var stageInstance: JFaceCanvas = null
   @volatile protected var preferredHeight = SWT.DEFAULT
   @volatile protected var preferredWidth = SWT.DEFAULT
   /** List of dispose listeners for JFaceCanvas. */
   protected val disposeListeners = new CopyOnWriteArrayList[JFaceCanvas ⇒ _].asScala
 
-  initialize
+  initializeSWT()
 
   /** Get adapter. */
   def adapter = Option(adapterInstance)
@@ -83,6 +83,12 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
     }
   /** Get host. */
   def host = Option(hostInstance)
+  /** Initialize JFX part of FXCanvas widget. */
+  def initializeJFX() {
+    com.sun.glass.ui.Application.checkEventThread()
+    hostInstance = JFXPlatformFactory.application.createHost(adapterInstance)
+    stageInstance = JFXPlatformFactory.application.createJFaceCanvas(hostInstance)
+  }
   /** Redraw. */
   def sceneNeedsRepaint() = host.foreach(_.sceneNeedsRepaint())
   /** Set scene preferred size. */
@@ -102,9 +108,11 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
 
   /** Create adapter. */
   protected def createAdapter(bindSceneSizeToCanvas: Boolean) = new Adapter(bindSceneSizeToCanvas)
-  /** Initialize FXCanvas widget */
-  protected def initialize() {
+  /** Initialize SWT part of FXCanvas widget. */
+  protected def initializeSWT() {
     checkWidget()
+    if (getDisplay().getThread != Thread.currentThread())
+      SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS)
     addPaintListener(adapterInstance)
     addControlListener(adapterInstance)
     addDisposeListener(new DisposeListener {
@@ -121,6 +129,7 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
       }
     })
   }
+  /** Initialize */
 
   class Adapter(val bindSceneSizeToCanvas: Boolean) extends ControlAdapter with FXAdapter with PaintListener {
     private[this] final val paletteData = JFX.paletteData
@@ -195,12 +204,16 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
      *
      * @param e an event containing information about the paint
      */
-    // In is about 60ms at 1900x1200 :-( ~15 FPS
+    // It is about 60ms at 1900x1200 :-( ~15 FPS
     // Linux devbox 3.10.0-gentoo #1 SMP PREEMPT Sat Jul 6 19:42:57 MSK 2013 x86_64 Intel(R) Core(TM) i7-2600K CPU @ 3.40GHz GenuineIntel GNU/Linux
     // GTK Cairo is too slow
     // Pure JavaFX with Java2D thread provides ~30 FPS at the same time. (every 2nd frame is dropped)
     // I see no workaround for this except GLCanvas, but OpenGL is out of scope.
     override def paintControl(event: PaintEvent) {
+      if (hostInstance == null) {
+        event.gc.fillRectangle(event.x, event.y, event.width, event.height)
+        return
+      }
       if (event.width <= 0 || event.height <= 0)
         return
       paintControlToDraw = frameFull.getAndSet(null)
