@@ -122,14 +122,14 @@ class FXCanvas(parent: Composite, style: Int, val bindSceneSizeToCanvas: Boolean
         removeControlListener(canvas.adapterInstance)
         val disposeListeners = FXCanvas.this.disposeListeners.toIndexedSeq
         FXCanvas.this.disposeListeners.clear()
-        stageInstance.close((stage: JFaceCanvas) ⇒ disposeListeners.foreach(_(stage)))
+        // We dispose FXCanvas before initializeJFX
+        Option(stageInstance).map { _.close((stage: JFaceCanvas) ⇒ disposeListeners.foreach(_(stage))) }
         canvas.adapterInstance = null
         canvas.hostInstance = null
         canvas.stageInstance = null
       }
     })
   }
-  /** Initialize */
 
   class Adapter(val bindSceneSizeToCanvas: Boolean) extends ControlAdapter with FXAdapter with PaintListener {
     private[this] final val paletteData = JFX.paletteData
