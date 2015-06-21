@@ -80,8 +80,8 @@ libraryDependencies ++= {
   Seq(
     "org.eclipse.swt" % artifact % "4.2.1" % "compileonly",
     "org.eclipse.swt" % artifact % "4.2.1" % "test",
-    "org.digimead" %% "digi-lib" % "0.3.0.3",
-    "org.digimead" %% "digi-lib-test" % "0.3.0.3" % "test"
+    "org.digimead" %% "digi-lib" % "0.3.1.3",
+    "org.digimead" %% "digi-lib-test" % "0.3.1.3" % "test"
   )
 }
 
