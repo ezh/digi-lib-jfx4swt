@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014-2015 Alexey Aksenov ezh@ezh.msk.ru
+// Copyright (c) 2014-2016 Alexey Aksenov ezh@ezh.msk.ru
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,16 +38,16 @@ inConfig(OSGiConf)({
   import OSGiKey._
   Seq(
         osgiBndBundleSymbolicName := "org.digimead.lib.swt4jfx",
-        osgiBndBundleCopyright := "Copyright © 2014-2015 Alexey B. Aksenov/Ezh. All rights reserved.",
+        osgiBndBundleCopyright := "Copyright © 2014-2016 Alexey B. Aksenov/Ezh. All rights reserved.",
         osgiBndBundleLicense := "http://www.gnu.org/licenses/lgpl-3.0.txt;description=GNU Lesser General Public License, Version 3.0",
         osgiBndExportPackage := List("org.digimead.digi.lib.*"),
         osgiBndImportPackage := List("!org.aspectj.*", "*"),
         osgiBndPrivatePackage := List())
 })
 
-crossScalaVersions := Seq("2.11.6")
+crossScalaVersions := Seq("2.11.8")
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-Xcheckinit", "-feature", "-Xfatal-warnings", "-Xelide-below", "ALL")
 
@@ -78,10 +78,10 @@ libraryDependencies ++= {
   }
   val artifact = "org.eclipse.swt." + os
   Seq(
-    "org.eclipse.swt" % artifact % "4.2.1" % "compileonly",
-    "org.eclipse.swt" % artifact % "4.2.1" % "test",
-    "org.digimead" %% "digi-lib" % "0.3.1.3",
-    "org.digimead" %% "digi-lib-test" % "0.3.1.3" % "test"
+    "org.eclipse.swt" % artifact % "4.3" % "compileonly",
+    "org.eclipse.swt" % artifact % "4.3" % "test",
+    "org.digimead" %% "digi-lib" % "0.3.1.4",
+    "org.digimead" %% "digi-lib-test" % "0.3.2.0" % "test"
   )
 }
 

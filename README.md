@@ -5,7 +5,7 @@ JFX4SWT - Base JavaFX library adapter for SWT framework.
 
 This library provides base API which must be implemented for the specific JVM version.
 
-__Required Java 7 or higher__
+__Required Java 8 or higher__
 
 AUTHORS
 -------
@@ -23,6 +23,6 @@ Please check the individual source files for details.
 Copyright
 ---------
 
-Copyright © 2014-2015 Alexey B. Aksenov/Ezh. All rights reserved.
+Copyright © 2014-2016 Alexey B. Aksenov/Ezh. All rights reserved.
 
 [![GNU Lesser General Public License](http://www.gnu.org/graphics/lgplv3-147x51.png)](http://www.gnu.org/licenses/lgpl.html)
